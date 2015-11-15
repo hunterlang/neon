@@ -244,8 +244,8 @@ def load_places2_mini(normalize=True):
         for image in files:
             full_path = os.path.join(subdir, image)
             im_arr = cv.imread(full_path);
-            im_arr = im_arr.reshape(-1, 16384);
-            im_arr = np.mean(im_arr, axis=0);
+            im_arr = im_arr.reshape(16384, 3);
+            im_arr = im_arr[:,2]
             images[count,:] = im_arr
             label = subdir.split("/")[-1]
             try:
@@ -255,6 +255,10 @@ def load_places2_mini(normalize=True):
             count+=1
             if count % 10000 == 0:
                 print count
+
+    channel_mean = np.mean(images, axis=0)
+    channel_mean = channel_mean.reshape(128, 128)
+    cv.imwrite("channel_2_mean.jpg", channel_mean)
 
     print images.shape
     labels = np.asarray(labels)
