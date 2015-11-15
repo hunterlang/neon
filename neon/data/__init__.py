@@ -18,5 +18,5 @@ from neon.data.image import Image, ImgMaster
 from neon.data.speech import Speech
 from neon.data.video import Video
 from neon.data.loader import (load_text, load_mnist, load_cifar10, load_flickr8k, load_flickr30k,
-                              load_coco, load_i1kmeta)
+                              load_coco, load_i1kmeta, load_places2_mini)
 from neon.data.imagecaption import ImageCaption, ImageCaptionTest

@@ -26,6 +26,109 @@ import tarfile
 import urllib2
 
 
+names_to_labels = {
+'abbey':1,
+'airport_terminal':2,
+'amphitheater':3,
+'amusement_park':4,
+'aquarium':5,
+'aqueduct':6,
+'art_gallery':7,
+'assembly_line':8,
+'auditorium':9,
+'badlands':10,
+'bakery':11,
+'ballroom':12,
+'bamboo_forest':13,
+'banquet_hall':14,
+'bar':15,
+'baseball_field':16,
+'bathroom':17,
+'beauty_salon':18,
+'bedroom':19,
+'boat_deck':20,
+'bookstore':21,
+'botanical_garden':22,
+'bowling_alley':23,
+'boxing_ring':24,
+'bridge':25,
+'bus_interior':26,
+'butchers_shop':27,
+'campsite':28,
+'candy_store':29,
+'canyon':30,
+'cemetery':31,
+'chalet':32,
+'church':33,
+'classroom':34,
+'clothing_store':35,
+'coast':36,
+'cockpit':37,
+'coffee_shop':38,
+'conference_room':39,
+'construction_site':40,
+'corn_field':41,
+'corridor':42,
+'courtyard':43,
+'dam':44,
+'desert':45,
+'dining_room':46,
+'driveway':47,
+'fire_station':48,
+'food_court':49,
+'fountain':50,
+'gas_station':51,
+'golf_course':52,
+'harbor':53,
+'highway':54,
+'hospital_room':55,
+'hot_spring':56,
+'iceberg':57,
+'ice_skating_rink':58,
+'kindergarden_classroom':59,
+'kitchen':60,
+'laundromat':61,
+'lighthouse':62,
+'living_room':63,
+'lobby':64,
+'locker_room':65,
+'market':66,
+'martial_arts_gym':67,
+'monastery':68,
+'mountain':69,
+'museum':70,
+'office':71,
+'palace':72,
+'parking_lot':73,
+'phone_booth':74,
+'playground':75,
+'racecourse':76,
+'railroad_track':77,
+'rainforest':78,
+'restaurant':79,
+'river':80,
+'rock_arch':81,
+'runway':82,
+'shed':83,
+'shower':84,
+'ski_slope':85,
+'skyscraper':86,
+'slum':87,
+'stadium':88,
+'stage':89,
+'staircase':90,
+'subway_station':91,
+'supermarket':92,
+'swamp':93,
+'swimming_pool':94,
+'temple':95,
+'track':96,
+'trench':97,
+'valley':98,
+'volcano':99,
+'yard':100,
+}
+
 logger = logging.getLogger(__name__)
 
 
@@ -123,6 +226,45 @@ def load_mnist(path=".", normalize=True):
 
         return (X_train, y_train), (X_test, y_test), 10
 
+
+def load_places2_mini(normalize=True):
+    import cv2 as cv
+    labels = []
+    count = 0
+    for subdir, dirs, files in os.walk("/home/users/hunter/images/train/"):
+        for image in files:
+            count += 1
+
+    print "found {} images".format(count)
+    images = np.ndarray([count, 16384])
+
+    count = 0
+    print "loading images"
+    for subdir, dirs, files in os.walk("/home/users/hunter/images/train/"):
+        for image in files:
+            full_path = os.path.join(subdir, image)
+            im_arr = cv.imread(full_path);
+            im_arr = im_arr.reshape(-1, 16384);
+            im_arr = np.mean(im_arr, axis=0);
+            images[count,:] = im_arr
+            label = subdir.split("/")[-1]
+            try:
+                labels.append(names_to_labels[label]);
+            except:
+                labels.append(names_to_labels[subdir.split("/")[-2]])
+            count+=1
+            if count % 10000 == 0:
+                print count
+
+    print images.shape
+    labels = np.asarray(labels)
+    labels = labels.reshape(-1, 1)
+    print labels.shape
+
+    if normalize:
+        im_arr = im_arr / 255.
+
+    return (images, labels)
 
 def load_cifar10(path=".", normalize=True):
     """
